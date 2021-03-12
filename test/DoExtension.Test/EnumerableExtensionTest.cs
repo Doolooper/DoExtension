@@ -14,9 +14,9 @@ namespace DoExtension.Test
             var emptyList = new List<object>();
             var notEmptyList = new List<object>() { 1, 2 };
 
-            nullList.IsEmpty().Should().Be(true);
-            emptyList.IsEmpty().Should().Be(true);
-            notEmptyList.IsEmpty().Should().Be(false);
+            DoCheck.IsEmpty(nullList).Should().Be(true);
+            DoCheck.IsEmpty(emptyList).Should().Be(true);
+            DoCheck.IsEmpty(notEmptyList).Should().Be(false);
         }
 
         [Fact]

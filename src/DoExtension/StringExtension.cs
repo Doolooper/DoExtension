@@ -2,9 +2,6 @@ namespace DoExtension
 {
     using System;
     using System.Collections.Generic;
-#if NETSTANDARD2_1 || NET5_0
-    using System.Diagnostics.CodeAnalysis;
-#endif
     using System.Globalization;
     using System.Text.RegularExpressions;
 
@@ -46,7 +43,7 @@ namespace DoExtension
 
         public static string FullTrim(this string str, params char[] trimChars)
         {
-            if (str.IsEmpty())
+            if (DoCheck.IsEmpty(str))
             {
                 return string.Empty;
             }
@@ -62,48 +59,6 @@ namespace DoExtension
             return str.Trim(list.ToArray());
         }
 
-        public static bool IsEmpty(
-#if NETSTANDARD2_1 || NET5_0
-            [NotNullWhen(false)] 
-#endif
-            this string str
-        )
-        {
-            if (string.IsNullOrEmpty(str) || string.IsNullOrWhiteSpace(str))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public static bool IsGuid(this string str)
-        {
-            if (str.IsNotEmpty())
-            {
-                return Guid.TryParse(str.FullTrim(), out var _);
-            }
-            return false;
-        }
-
-        public static bool IsNotEmpty(
-#if NETSTANDARD2_1 || NET5_0
-            [NotNullWhen(true)] 
-#endif
-            this string? str
-        )
-        {
-            return str.IsEmpty() == false;
-        }
-
-        public static bool IsNumeric(this string? str)
-        {
-            if (str.IsEmpty())
-            {
-                return false;
-            }
-            return ObjectIsNumeric(str.FullTrim());
-        }
-
         public static string Left(this string str, int len)
         {
             return str.Substring(0, len);
@@ -117,7 +72,7 @@ namespace DoExtension
 
         public static string Remove(this string str, string strToRemove)
         {
-            if (str.IsEmpty())
+            if (DoCheck.IsEmpty(str))
             {
                 return "";
             }
@@ -196,11 +151,11 @@ namespace DoExtension
 
         public static double ToDouble(this string str)
         {
-            if (str.IsEmpty())
+            if (DoCheck.IsEmpty(str))
             {
                 throw new ArgumentNullException(nameof(str));
             }
-            if (!str.IsNumeric())
+            if (!DoCheck.IsNumeric(str))
             {
                 throw new InvalidCastException();
             }
@@ -209,11 +164,11 @@ namespace DoExtension
 
         public static double? ToDoubleOrDefault(this string str, double? defualtValue = null)
         {
-            if (str.IsEmpty())
+            if (DoCheck.IsEmpty(str))
             {
                 return defualtValue;
             }
-            if (!str.IsNumeric())
+            if (!DoCheck.IsNumeric(str))
             {
                 return defualtValue;
             }
@@ -222,7 +177,7 @@ namespace DoExtension
 
         public static Guid ToGuid(this string str)
         {
-            if (!str.IsGuid())
+            if (!DoCheck.IsGuid(str))
             {
                 throw new InvalidCastException();
             }
@@ -231,7 +186,7 @@ namespace DoExtension
 
         public static Guid? ToGuidOrDefualt(this string str, Guid? defualtValue = null)
         {
-            if (!str.IsGuid())
+            if (!DoCheck.IsGuid(str))
             {
                 return defualtValue;
             }
@@ -240,11 +195,11 @@ namespace DoExtension
 
         public static int ToInt(this string str)
         {
-            if (str.IsEmpty())
+            if (DoCheck.IsEmpty(str))
             {
                 throw new ArgumentNullException(nameof(str));
             }
-            if (!str.IsNumeric())
+            if (!DoCheck.IsNumeric(str))
             {
                 throw new InvalidCastException();
             }
@@ -253,11 +208,11 @@ namespace DoExtension
 
         public static int? ToIntOrDefault(this string str, int? defualtValue = null)
         {
-            if (str.IsEmpty())
+            if (DoCheck.IsEmpty(str))
             {
                 return defualtValue;
             }
-            if (!str.IsNumeric())
+            if (!DoCheck.IsNumeric(str))
             {
                 return defualtValue;
             }
@@ -266,11 +221,11 @@ namespace DoExtension
 
         public static long ToLong(this string str)
         {
-            if (str.IsEmpty())
+            if (DoCheck.IsEmpty(str))
             {
                 throw new ArgumentNullException(nameof(str));
             }
-            if (!str.IsNumeric())
+            if (!DoCheck.IsNumeric(str))
             {
                 throw new InvalidCastException(nameof(str));
             }
@@ -279,24 +234,15 @@ namespace DoExtension
 
         public static long? ToLongOrDefault(this string str, long? defualtValue = null)
         {
-            if (str.IsEmpty())
+            if (DoCheck.IsEmpty(str))
             {
                 return defualtValue;
             }
-            if (!str.IsNumeric())
+            if (!DoCheck.IsNumeric(str))
             {
                 return defualtValue;
             }
             return long.Parse(str.Trim());
-        }
-
-        private static bool ObjectIsNumeric(object obj)
-        {
-            var isNum = double.TryParse(Convert.ToString(obj),
-                                        NumberStyles.Any,
-                                        NumberFormatInfo.InvariantInfo,
-                                        out var _);
-            return isNum;
         }
     }
 }
